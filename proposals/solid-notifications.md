@@ -116,6 +116,8 @@ The client sends a JSON-LD payload to this endpoint via POST. The only required 
 
 All other fields are defined by the particular subscription type. Some common features are described in the Features section of this document.
 
+#### Creating a Subscription
+
 An example POST request using a DPoP bound access token is below:
 
 ```http
@@ -159,6 +161,30 @@ A client will define how to handle events, especially the onclose and onmessage 
 ws.onclose(evt => reconnect(evt));
 ws.onmessage(evt => console.log("Message received: ", evt))
 ```
+
+#### Cancelling a Subscription
+
+For some of the notification types, (`WebHookSubscription2021`, `LinkedDataNotificationSubscription2021` and `EventSourceSubscription2021`) ,there is a need to be able to cancel the subscription.
+
+This can be done by sending a DELETE request to the subscription endpoint.
+
+An example DELETE request using a DPoP bound access token is below:
+
+```http
+DELETE /subscription
+Authorization: DPoP <token>
+DPoP: <proof>
+Content-Type: application/ld+json
+
+{
+    "@context": ["https://www.w3.org/ns/solid/notification/v1"],
+    "type": "WebSocketSubscription2021",
+    "topic": "https://pod.example/resource",
+}
+```
+
+A successful response will return 204, and the client will be removed from notifications of changes on this resource.
+
 
 ## Authentication and Authorization
 
